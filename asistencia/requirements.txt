@@ -1,0 +1,10 @@
+# Entorno recomendado: Python 3.11 de 64 bits
+deepface==0.0.93
+tensorflow==2.16.2
+tf-keras==2.16.0
+numpy==1.26.4
+opencv-python==4.10.0.84
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+python-multipart>=0.0.18,<1
+tzdata>=2024.1

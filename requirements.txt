@@ -1,3 +1,4 @@
+-r asistencia/requirements.txt
 deepface
 fastapi
 uvicorn
@@ -5,4 +6,5 @@ python-multipart
 numpy
 tf-keras
 scipy
-opencv-python-headless
+opencv-python
+tzdata

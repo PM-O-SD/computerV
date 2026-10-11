@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Asistencia facial</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><main>
+<header><span class="tag">PROYECTO DE VISIÓN POR COMPUTADORA</span><h1>Asistencia facial</h1><p>Registra personas autorizadas y toma asistencia con una fotografía o con la cámara.</p></header>
+<div id="notice" role="status" aria-live="polite">Listo para comenzar.</div>
+<section class="grid">
+<article><h2>1. Registrar una persona</h2><form id="register">
+<label>ID de la persona<input name="person_id" maxlength="40" pattern="[A-Za-z0-9_-]+" placeholder="Ej. alumno_01" required></label>
+<label>Nombre<input name="name" maxlength="100" placeholder="Nombre completo" required></label>
+<label>Fotografía frontal<input name="photo" type="file" accept="image/jpeg,image/png" required></label>
+<label class="check"><input id="consent" type="checkbox" required> La persona autorizó el uso de su rostro para esta demostración.</label>
+<button type="submit">Registrar persona</button></form><p class="hint">Usa una imagen con un solo rostro. La fotografía se procesa sin guardarse.</p></article>
+<article><h2>2. Tomar asistencia</h2><form id="recognize"><label>Fotografía<input name="photo" type="file" accept="image/jpeg,image/png" required></label><button type="submit">Reconocer fotografía</button></form>
+<div class="divider">O utiliza tu cámara</div><video id="video" autoplay muted playsinline hidden></video><canvas id="canvas" hidden></canvas>
+<div class="buttons"><button id="camera" type="button" class="secondary">Activar cámara</button><button id="capture" type="button" disabled>Capturar y reconocer</button><button id="stop" type="button" class="secondary" disabled>Detener cámara</button></div>
+<label class="check"><input type="checkbox" id="automatic"> Reconocer automáticamente cada 5 segundos</label>
+<p class="hint">Mantén una persona frente a la cámara. La asistencia se registra una sola vez al día.</p></article>
+</section>
+<section><div class="heading"><h2>Asistencia del día</h2><a id="export" class="link" href="/api/export">Descargar CSV</a></div><label>Fecha<input type="date" id="day"></label><div class="scroll"><table><thead><tr><th>ID</th><th>Nombre</th><th>Hora</th></tr></thead><tbody id="attendance"></tbody></table></div></section>
+<section><h2>Personas registradas</h2><ul id="people"></ul><p class="hint">Eliminar una persona también elimina su representación facial y sus asistencias guardadas.</p></section>
+<footer>Demostración local con DeepFace. Las coincidencias pueden fallar; revisa los registros antes de usarlos como evidencia.</footer>
+</main><script src="/static/app.js"></script></body></html>

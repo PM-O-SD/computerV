@@ -1,3 +1,76 @@
+# Sistema de asistencia facial y MoodMeter
+
+## Sistema de asistencia para la entrega de visión por computadora
+
+La nueva aplicación registra personas autorizadas, reconoce un rostro mediante una fotografía o cámara y registra una asistencia por persona y día. Puedes consultar una fecha y descargar sus asistencias como CSV. La aplicación MoodMeter original se conserva en `app/`.
+
+### Instalación recomendada
+
+Usa Python 3.11 de 64 bits. Desde la carpeta del repositorio, crea un entorno aislado e instala las dependencias específicas de asistencia:
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r asistencia/requirements.txt
+.\.venv\Scripts\python.exe -m uvicorn asistencia.main:app --host 127.0.0.1 --port 8001
+```
+
+En macOS/Linux:
+
+```sh
+python3.11 -m venv .venv
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r asistencia/requirements.txt
+.venv/bin/python -m uvicorn asistencia.main:app --host 127.0.0.1 --port 8001
+```
+
+Abre **http://127.0.0.1:8001**. No necesitas activar el entorno virtual con estos comandos. TensorFlow y DeepFace son dependencias grandes; la instalación y la primera descarga del modelo pueden tardar varios minutos y requieren conexión. No mezcles este entorno con una instalación previa de MoodMeter. La configuración fijada usa TensorFlow; el DeepFace más reciente puede tener otra configuración predeterminada.
+
+El `requirements.txt` raíz incluye las dependencias de ambas aplicaciones, pero para reproducir esta entrega usa las versiones de `asistencia/requirements.txt`.
+
+### Demostración paso a paso
+
+1. Escribe un ID y nombre, selecciona una foto frontal con un solo rostro y confirma la autorización de la persona. Pulsa **Registrar persona**.
+2. En **Tomar asistencia**, sube una segunda foto de la misma persona o activa la cámara y pulsa **Capturar y reconocer**.
+3. Opcionalmente activa el reconocimiento automático cada cinco segundos. Sólo se realiza una solicitud a la vez.
+4. Comprueba la asistencia y vuelve a reconocer a la persona: debe indicar que ya estaba registrada ese día.
+5. Descarga el CSV. Un rostro desconocido o una coincidencia ambigua no registra asistencia.
+6. Para retirar un registro, pulsa **Eliminar** y confirma; también se eliminan sus asistencias.
+
+La cámara funciona en localhost y requiere permiso del navegador. Si no hay cámara, el flujo con fotografías permite demostrar todo el proyecto.
+
+### Funcionamiento y datos
+
+DeepFace detecta y alinea el rostro con OpenCV, obtiene un embedding con Facenet512 y verifica su similitud frente a los registros mediante distancia coseno y el umbral predeterminado del modelo. Se rechazan imágenes con varios rostros. Los nombres, embeddings y asistencias se guardan en SQLite bajo `data/asistencia/`, excluida de Git. Las fotografías se procesan en memoria y no se guardan. Los embeddings también son datos biométricos; usa únicamente participantes autorizados.
+
+La fecha se calcula en `America/Mexico_City`. Es una demostración local sin autenticación ni prueba de vida: no debe usarse como control de acceso o asistencia oficial sin evaluación adicional. Una fotografía podría generar una coincidencia. El reconocimiento puede fallar con mala iluminación o cambios de apariencia; revisar los registros sigue siendo necesario. No se infieren edad, género ni emociones para tomar asistencia.
+
+### Comprobaciones
+
+```sh
+python -m unittest asistencia.test_core asistencia.test_api -v
+```
+
+Las pruebas comprueban que solicitudes concurrentes no duplican asistencias, que otro día permite un nuevo registro, que la eliminación retira los datos asociados, que el CSV no interpreta nombres como fórmulas y que coincidencias ambiguas/desconocidas y varias caras se manejan correctamente. Una prueba HTTP recorre registro, reconocimiento, consulta, exportación y eliminación. Las pruebas de decisiones usan un backend simulado e imágenes sintéticas; no acreditan precisión biométrica.
+
+Para validar el modelo real, registra participantes autorizados y prueba fotos diferentes, un rostro no registrado, imágenes sin rostro y con dos personas. Documenta coincidencias correctas e incorrectas antes de afirmar una precisión. No se incluyen fotografías de personas ni resultados biométricos inventados.
+
+Comprobación opcional de la carga del modelo y de rechazo de imágenes sin rostro:
+
+```sh
+python -m asistencia.check_model
+```
+
+Validación realizada: instalación de las dependencias en Python 3.11.9 sobre Windows, seis pruebas automáticas satisfactorias, carga de Facenet512, verificación de vectores sintéticos y rechazo de una imagen vacía. No se ha validado aún la precisión con personas reales ni la captura desde una cámara física.
+
+### Subir la entrega
+
+Sube `asistencia/`, `requirements.txt`, `.gitignore` y este README. No subas `.venv/` ni `data/asistencia/`. Toma una captura del repositorio actualizado y otra de la aplicación con datos de demostración autorizados.
+
+Fuente de la integración: https://github.com/serengil/deepface/tree/v0.0.93
+
+---
+
 # MoodMeter 📊🎭 — Decodificador de Expresiones Faciales con IA
 
 **MoodMeter** es un playground interactivo y didáctico de visión por computadora diseñado para analizar emociones y microexpresiones faciales en tiempo real. 

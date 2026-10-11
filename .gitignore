@@ -30,3 +30,6 @@ data/users_db.json
 .vscode/
 *.swp
 *.swo
+
+# Registro privado de la demostración de asistencia
+data/asistencia/
